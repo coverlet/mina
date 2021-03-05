@@ -34,6 +34,9 @@ module Node = struct
   let start ~fresh_state node : unit Malleable_error.t =
     let open Malleable_error.Let_syntax in
     let%bind () =
+      Deferred.bind ~f:Malleable_error.return (run_in_container node "ps aux")
+    in
+    let%bind () =
       if fresh_state then
         Deferred.bind ~f:Malleable_error.return
           (run_in_container node "rm -rf .mina-config")
